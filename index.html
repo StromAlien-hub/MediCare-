@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MediCare+ v2 | Healthcare Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --t:#00C2A8;--td:#007F6E;--tg:rgba(0,194,168,.15);
+  --n:#080F1E;--n2:#0D1930;--n3:#152240;--n4:#1C2E52;
+  --w:#fff;--m:rgba(255,255,255,.42);--b:rgba(255,255,255,.07);
+  --r:#FF4060;--a:#FFA830;--p:#8B5CF6;--g:#22C55E;
+  --gl:rgba(255,255,255,.04);
+  --rs:10px;--rm:16px;--rl:24px;--rx:32px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--n);color:var(--w);overflow-x:hidden;line-height:1.6}
+button{font-family:inherit;cursor:pointer}
+input,textarea,select{font-family:inherit}
+a{text-decoration:none;color:inherit}
+
+/* BACKGROUND */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 90% 10%,rgba(0,194,168,.08) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 5% 95%,rgba(139,92,246,.06) 0%,transparent 55%)}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:230px;z-index:50;
+  background:rgba(8,15,30,.95);backdrop-filter:blur(24px);
+  border-right:1px solid var(--b);display:flex;flex-direction:column;padding:24px 0;
+  transition:transform .3s}
+.s-logo{padding:0 20px 28px;font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800}
+.s-logo span{color:var(--t)}
+.s-group{flex:1;padding:0 10px;overflow-y:auto}
+.s-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;
+  color:var(--m);padding:0 10px 7px}
+.s-item{display:flex;align-items:center;gap:11px;padding:10px 10px;border-radius:var(--rs);
+  color:var(--m);font-size:.88rem;font-weight:500;cursor:pointer;transition:all .2s;
+  margin-bottom:1px;border:none;background:none;width:100%;text-align:left}
+.s-item:hover{color:var(--w);background:var(--gl)}
+.s-item.active{color:var(--t);background:var(--tg)}
+.s-icon{font-size:1.1rem;width:20px;text-align:center}
+.s-foot{padding:16px 20px 0;border-top:1px solid var(--b);margin:0 10px}
+.u-pill{display:flex;align-items:center;gap:9px;padding:10px;border-radius:var(--rs);background:var(--gl);cursor:pointer}
+.u-av{width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,var(--td),var(--p));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.82rem;font-weight:700;flex-shrink:0}
+.u-nm{font-size:.82rem;font-weight:600}
+.u-rl{font-size:.7rem;color:var(--m)}
+
+/* MAIN */
+.app{display:flex;min-height:100vh}
+.main{margin-left:230px;flex:1;position:relative;z-index:1}
+
+/* TOPBAR */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 32px;
+  background:rgba(8,15,30,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--b)}
+.tb-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700}
+.tb-acts{display:flex;align-items:center;gap:10px}
+.tb-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:50px;
+  font-size:.83rem;font-weight:600;border:none;transition:all .2s}
+.tb-teal{background:var(--t);color:var(--n)}
+.tb-teal:hover{background:var(--td)}
+.tb-ghost{background:var(--gl);color:var(--w);border:1px solid var(--b)}
+.tb-ghost:hover{border-color:var(--t);color:var(--t)}
+.tb-sos{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:50px;
+  background:rgba(255,64,96,.12);border:1px solid rgba(255,64,96,.25);
+  color:var(--r);font-size:.83rem;font-weight:700;animation:sblink 2s infinite}
+@keyframes sblink{0%,100%{border-color:rgba(255,64,96,.25)}50%{border-color:rgba(255,64,96,.6)}}
+
+/* PAGES */
+.page{display:none;padding:32px;animation:pIn .28s ease}
+.page.active{display:block}
+@keyframes pIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* COMPONENTS */
+.card{background:var(--gl);border:1px solid var(--b);border-radius:var(--rl);transition:all .25s}
+.card:hover{border-color:rgba(255,255,255,.11)}
+.ph{margin-bottom:28px}
+.ph h1{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;letter-spacing:-.5px}
+.ph p{color:var(--m);font-size:.92rem;margin-top:5px}
+.lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t);margin-bottom:10px}
+.badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:600}
+.bg-g{background:rgba(34,197,94,.12);color:var(--g)}
+.bg-r{background:rgba(255,64,96,.12);color:var(--r)}
+.bg-a{background:rgba(255,168,48,.12);color:var(--a)}
+.bg-t{background:var(--tg);color:var(--t)}
+.bg-p{background:rgba(139,92,246,.12);color:var(--p)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.8rem;color:var(--m);margin-bottom:5px;font-weight:500}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 13px;background:var(--n3);border:1px solid var(--b);
+  border-radius:var(--rs);color:var(--w);font-size:.88rem;outline:none;transition:border .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--t)}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.22)}
+.field select option{background:var(--n3)}
+.btn{padding:11px 22px;border-radius:var(--rs);font-size:.88rem;font-weight:600;border:none;
+  transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+.bt{background:var(--t);color:var(--n)}
+.bt:hover{background:var(--td);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,194,168,.25)}
+.bo{background:var(--gl);color:var(--w);border:1px solid var(--b)}
+.bo:hover{border-color:var(--t);color:var(--t)}
+.br{background:rgba(255,64,96,.12);color:var(--r);border:1px solid rgba(255,64,96,.2)}
+.br:hover{background:rgba(255,64,96,.22)}
+.bf{width:100%;justify-content:center}
+.spin{width:20px;height:20px;border:2px solid rgba(255,255,255,.12);border-top-color:var(--t);
+  border-radius:50%;animation:sp .6s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ld{display:flex;align-items:center;justify-content:center;gap:12px;padding:40px;color:var(--m)}
+.es{text-align:center;padding:50px 20px;color:var(--m)}
+.es .ei{font-size:2.8rem;margin-bottom:10px}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;z-index:999;
+  background:var(--n3);border:1px solid var(--b);border-radius:var(--rm);
+  padding:13px 18px;font-size:.88rem;display:flex;align-items:center;gap:9px;
+  transform:translateY(70px);opacity:0;transition:all .3s;max-width:300px}
+#toast.show{transform:translateY(0);opacity:1}
+
+/* AUTH */
+#auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.ab{background:var(--n2);border:1px solid var(--b);border-radius:var(--rx);padding:44px;width:100%;max-width:420px}
+.a-logo{font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:800;text-align:center;margin-bottom:6px}
+.a-logo span{color:var(--t)}
+.a-sub{text-align:center;color:var(--m);font-size:.88rem;margin-bottom:28px}
+.a-tabs{display:flex;gap:3px;background:var(--n3);border-radius:var(--rs);padding:4px;margin-bottom:26px}
+.a-tab{flex:1;padding:9px;border-radius:8px;border:none;background:none;color:var(--m);
+  font-weight:600;font-size:.86rem;cursor:pointer;transition:all .2s}
+.a-tab.active{background:var(--t);color:var(--n)}
+
+/* DASHBOARD */
+.sc{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.sc-c{padding:22px;border-radius:var(--rm);background:var(--gl);border:1px solid var(--b)}
+.sc-i{font-size:1.5rem;margin-bottom:10px}
+.sc-v{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;color:var(--t)}
+.sc-l{font-size:.78rem;color:var(--m);margin-top:2px}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.qa-b{padding:18px 14px;border-radius:var(--rm);background:var(--gl);border:1px solid var(--b);
+  text-align:center;cursor:pointer;transition:all .25s}
+.qa-b:hover{border-color:var(--t);background:var(--tg);transform:translateY(-3px)}
+.qa-i{font-size:1.7rem;margin-bottom:7px}
+.qa-l{font-size:.82rem;font-weight:600}
+
+/* DOCTORS */
+.dsb{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+.dsb input,.dsb select{
+  padding:10px 14px;background:var(--n3);border:1px solid var(--b);
+  border-radius:var(--rs);color:var(--w);font-size:.88rem;outline:none}
+.dsb input{flex:1;min-width:180px}
+.dsb input:focus,.dsb select:focus{border-color:var(--t)}
+.dsb select option{background:var(--n3)}
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dc{padding:22px;border-radius:var(--rm);background:var(--gl);border:1px solid var(--b);transition:all .25s}
+.dc:hover{border-color:rgba(0,194,168,.3);transform:translateY(-4px)}
+.dc-top{display:flex;align-items:flex-start;gap:13px;margin-bottom:12px}
+.dc-av{width:50px;height:50px;border-radius:50%;
+  background:linear-gradient(135deg,var(--td),var(--p));
+  display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.dc-nm{font-weight:700;font-size:.95rem}
+.dc-sp{font-size:.78rem;color:var(--t);margin-top:2px}
+.dc-ex{font-size:.76rem;color:var(--m);margin-top:1px}
+.dc-rt{display:flex;align-items:center;gap:4px;font-size:.8rem;color:var(--a)}
+.dc-types{display:flex;gap:5px;margin:8px 0 14px;flex-wrap:wrap}
+.dc-tt{padding:3px 9px;border-radius:50px;font-size:.7rem;background:var(--n3);color:var(--m);border:1px solid var(--b)}
+
+/* MODAL */
+.mo{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s}
+.mo.open{opacity:1;pointer-events:all}
+.mw{background:var(--n2);border:1px solid var(--b);border-radius:var(--rx);padding:34px;
+  width:90%;max-width:500px;transform:scale(.95);transition:transform .25s}
+.mo.open .mw{transform:scale(1)}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.mh h2{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700}
+.mc{background:none;border:none;color:var(--m);font-size:1.3rem;cursor:pointer}
+.ctabs{display:flex;gap:9px;margin-bottom:18px}
+.ct{flex:1;padding:11px;border-radius:var(--rs);border:1px solid var(--b);background:none;
+  text-align:center;cursor:pointer;font-size:.83rem;font-weight:600;color:var(--m);transition:all .2s}
+.ct.active{border-color:var(--t);background:var(--tg);color:var(--t)}
+.sg{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 18px}
+.sb{padding:7px 14px;border-radius:50px;border:1px solid var(--b);background:none;
+  font-size:.8rem;color:var(--m);cursor:pointer;transition:all .2s}
+.sb:hover{border-color:var(--t);color:var(--t)}
+.sb.active{background:var(--t);color:var(--n);border-color:var(--t);font-weight:700}
+.sb.taken{opacity:.3;cursor:not-allowed}
+
+/* STORE */
+.stb{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.ss{flex:1;min-width:200px;display:flex;align-items:center;gap:9px;
+  padding:10px 14px;background:var(--n3);border:1px solid var(--b);border-radius:var(--rs)}
+.ss input{flex:1;background:none;border:none;color:var(--w);font-size:.88rem;outline:none}
+.ss input::placeholder{color:rgba(255,255,255,.22)}
+.cp{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+.cp-b{padding:6px 14px;border-radius:50px;border:1px solid var(--b);background:none;
+  font-size:.8rem;color:var(--m);cursor:pointer;transition:all .2s}
+.cp-b.active{border-color:var(--t);background:var(--tg);color:var(--t)}
+.pg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.pc{padding:18px;border-radius:var(--rm);background:var(--gl);border:1px solid var(--b);
+  transition:all .25s;position:relative}
+.pc:hover{border-color:rgba(255,255,255,.11);transform:translateY(-3px)}
+.rf{position:absolute;top:11px;right:11px;padding:2px 7px;border-radius:50px;
+  font-size:.63rem;font-weight:700;letter-spacing:.5px}
+.rf.rx{background:rgba(255,168,48,.12);color:var(--a)}
+.rf.dv{background:rgba(139,92,246,.12);color:var(--p)}
+.pe{font-size:1.9rem;margin-bottom:9px}
+.pcat{font-size:.65rem;color:var(--t);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px}
+.pnm{font-weight:700;font-size:.9rem;margin-bottom:3px}
+.pd{font-size:.78rem;color:var(--m);margin-bottom:12px;line-height:1.4}
+.pf{display:flex;align-items:center;justify-content:space-between}
+.pp{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800}
+.pa{width:30px;height:30px;border-radius:50%;background:var(--t);color:var(--n);
+  border:none;font-size:1.1rem;font-weight:700;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s}
+.pa:hover{background:var(--td);transform:scale(1.1)}
+
+/* AMBULANCE */
+.al{display:grid;grid-template-columns:1fr 1.3fr;gap:24px}
+.sp{padding:32px;border-radius:var(--rx);
+  background:linear-gradient(160deg,rgba(255,64,96,.08) 0%,var(--gl) 100%);
+  border:1px solid rgba(255,64,96,.18);text-align:center}
+.sc2{width:160px;height:160px;border-radius:50%;
+  background:linear-gradient(145deg,#FF4060,#c0392b);
+  border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:0 auto 22px;box-shadow:0 0 0 0 rgba(255,64,96,.4);
+  animation:sps 2.2s infinite;transition:transform .15s;color:white}
+.sc2:hover{transform:scale(1.04)}
+.sc2 .si{font-size:2.3rem}
+.sc2 .sl{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;letter-spacing:2px;margin-top:3px}
+@keyframes sps{0%{box-shadow:0 0 0 0 rgba(255,64,96,.5)}70%{box-shadow:0 0 0 32px rgba(255,64,96,0)}100%{box-shadow:0 0 0 0 rgba(255,64,96,0)}}
+.sh{font-size:.82rem;color:var(--m);max-width:200px;margin:0 auto 18px}
+#sos-stat{border-radius:var(--rm);padding:14px;display:none;font-size:.88rem;text-align:center;margin-top:4px}
+.af{display:flex;flex-direction:column;gap:14px}
+.afc{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:var(--rm);background:var(--gl);border:1px solid var(--b)}
+.afi{font-size:1.6rem;flex-shrink:0}
+.aft{font-weight:700;font-size:.9rem;margin-bottom:3px}
+.afd{font-size:.8rem;color:var(--m);line-height:1.5}
+
+/* AI CHAT */
+.ail{display:grid;grid-template-columns:1fr 320px;gap:22px;height:calc(100vh - 150px)}
+.cp2{display:flex;flex-direction:column;background:var(--gl);border:1px solid var(--b);border-radius:var(--rx);overflow:hidden}
+.ch{display:flex;align-items:center;gap:11px;padding:16px 20px;
+  background:rgba(0,194,168,.06);border-bottom:1px solid var(--b);flex-shrink:0}
+.ao{width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--t),var(--p));
+  display:flex;align-items:center;justify-content:center;font-size:1rem}
+.chn{font-weight:700;font-size:.92rem}
+.chs{font-size:.72rem;color:var(--t)}
+.cm{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
+.cm::-webkit-scrollbar{width:4px}
+.cm::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+.mr{display:flex;gap:9px}
+.mr.user{flex-direction:row-reverse}
+.morb{width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--t),var(--p));
+  display:flex;align-items:center;justify-content:center;font-size:.72rem}
+.mr.user .morb{background:linear-gradient(135deg,var(--p),#ec4899)}
+.bbl{max-width:80%;padding:11px 15px;border-radius:17px;font-size:.86rem;line-height:1.6}
+.mr.ai  .bbl{background:var(--n3);border:1px solid var(--b);border-radius:4px 17px 17px 17px}
+.mr.user .bbl{background:var(--t);color:var(--n);font-weight:500;border-radius:17px 17px 4px 17px}
+.cf{display:flex;gap:9px;padding:14px;border-top:1px solid var(--b);flex-shrink:0}
+.ci{flex:1;padding:10px 14px;background:var(--n3);border:1px solid var(--b);
+  border-radius:var(--rs);color:var(--w);font-size:.86rem;outline:none;transition:border .2s}
+.ci:focus{border-color:var(--t)}
+.ci::placeholder{color:rgba(255,255,255,.22)}
+.cs{padding:10px 16px;background:var(--t);color:var(--n);border:none;
+  border-radius:var(--rs);font-weight:700;font-size:.86rem;transition:all .2s}
+.cs:hover{background:var(--td)}
+.ais{display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.asc{padding:18px;border-radius:var(--rm);background:var(--gl);border:1px solid var(--b)}
+.ast{font-weight:700;font-size:.88rem;margin-bottom:11px}
+.qq{padding:8px 12px;border-radius:var(--rs);background:var(--n3);border:1px solid var(--b);
+  font-size:.8rem;color:var(--m);cursor:pointer;margin-bottom:7px;
+  transition:all .2s;display:block;width:100%;text-align:left}
+.qq:hover{border-color:var(--t);color:var(--t)}
+
+/* CART */
+.cd{position:fixed;right:0;top:0;bottom:0;width:320px;z-index:150;
+  background:var(--n2);border-left:1px solid var(--b);
+  display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s}
+.cd.open{transform:translateX(0)}
+.cdh{display:flex;justify-content:space-between;align-items:center;
+  padding:18px 22px;border-bottom:1px solid var(--b)}
+.cdh h3{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700}
+.cdc{background:none;border:none;color:var(--m);font-size:1.3rem;cursor:pointer}
+.cdi{flex:1;overflow-y:auto;padding:14px}
+.ci2{display:flex;align-items:center;gap:11px;padding:12px;border-radius:var(--rm);
+  background:var(--gl);border:1px solid var(--b);margin-bottom:9px}
+.ci2-nm{font-size:.85rem;font-weight:600}
+.ci2-pr{font-size:.78rem;color:var(--t);margin-top:1px}
+.cq{display:flex;align-items:center;gap:9px;margin-left:auto}
+.qb{width:24px;height:24px;border-radius:50%;border:1px solid var(--b);
+  background:none;color:var(--w);cursor:pointer;font-size:.95rem;
+  display:flex;align-items:center;justify-content:center}
+.qb:hover{border-color:var(--t);color:var(--t)}
+.cdf{padding:14px 18px;border-top:1px solid var(--b)}
+.ct2{display:flex;justify-content:space-between;margin-bottom:12px;font-weight:700}
+.cb{position:absolute;top:-4px;right:-4px;background:var(--r);color:white;
+  width:17px;height:17px;border-radius:50%;font-size:.63rem;font-weight:700;
+  display:none;align-items:center;justify-content:center}
+
+/* RECORDS */
+.rts{display:flex;gap:7px;margin-bottom:22px}
+.rt{padding:8px 18px;border-radius:50px;border:1px solid var(--b);background:none;
+  color:var(--m);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+.rt.active{border-color:var(--t);background:var(--tg);color:var(--t)}
+
+@media(max-width:1100px){.dg{grid-template-columns:repeat(2,1fr)}.pg{grid-template-columns:repeat(3,1fr)}.sc{grid-template-columns:repeat(2,1fr)}.qa{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.dg{grid-template-columns:1fr}.pg{grid-template-columns:repeat(2,1fr)}.al{grid-template-columns:1fr}.ail{grid-template-columns:1fr;height:auto}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<!-- ══ AUTH ══ -->
+<div id="auth">
+  <div class="ab">
+    <div class="a-logo">Medi<span>Care+</span></div>
+    <div class="a-sub">Your complete healthcare ecosystem</div>
+    <div class="a-tabs">
+      <button class="a-tab active" onclick="swAuth('login',this)">Sign In</button>
+      <button class="a-tab" onclick="swAuth('reg',this)">Register</button>
+    </div>
+    <div id="lf">
+      <div class="field"><label>Email</label><input type="email" id="le" placeholder="demo@medicare.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="lp" placeholder="demo123"></div>
+      <button class="btn bt bf" onclick="doLogin()">Sign In →</button>
+      <p style="text-align:center;margin-top:14px;font-size:.8rem;color:var(--m)">Demo: <b style="color:var(--t)">demo@medicare.com</b> / <b style="color:var(--t)">demo123</b></p>
+    </div>
+    <div id="rf" style="display:none">
+      <div class="g2">
+        <div class="field"><label>Full Name</label><input type="text" id="rn" placeholder="Your name"></div>
+        <div class="field"><label>Phone</label><input type="tel" id="rph" placeholder="9876543210"></div>
+      </div>
+      <div class="field"><label>Email</label><input type="email" id="re" placeholder="you@example.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="rpw" placeholder="Min 6 chars"></div>
+      <button class="btn bt bf" onclick="doRegister()">Create Account →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app" class="app" style="display:none">
+  <aside class="sidebar" id="sidebar">
+    <div class="s-logo">Medi<span>Care+</span></div>
+    <nav class="s-group">
+      <div class="s-lbl">Main</div>
+      <button class="s-item active" onclick="nav('dashboard')"><span class="s-icon">🏠</span>Dashboard</button>
+      <button class="s-item" onclick="nav('doctors')"><span class="s-icon">🩺</span>Find Doctors</button>
+      <button class="s-item" onclick="nav('appointments')"><span class="s-icon">📅</span>Appointments</button>
+      <div class="s-lbl" style="margin-top:14px">Store</div>
+      <button class="s-item" onclick="nav('store')"><span class="s-icon">💊</span>MediStore</button>
+      <button class="s-item" onclick="nav('orders')"><span class="s-icon">📦</span>My Orders</button>
+      <div class="s-lbl" style="margin-top:14px">Health</div>
+      <button class="s-item" onclick="nav('ambulance')"><span class="s-icon">🚑</span>Emergency</button>
+      <button class="s-item" onclick="nav('ai')"><span class="s-icon">🤖</span>AI Assistant</button>
+      <button class="s-item" onclick="nav('records')"><span class="s-icon">📋</span>Health Records</button>
+      <button class="s-item" onclick="nav('profile')"><span class="s-icon">👤</span>My Profile</button>
+    </nav>
+    <div class="s-foot">
+      <div class="u-pill" onclick="nav('profile')">
+        <div class="u-av" id="u-av">U</div>
+        <div><div class="u-nm" id="u-nm">Loading...</div><div class="u-rl">Patient</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-title" id="pg-title">Dashboard</div>
+      <div class="tb-acts">
+        <button class="tb-sos" onclick="nav('ambulance')">🚑 Emergency SOS</button>
+        <div style="position:relative">
+          <button class="tb-btn tb-ghost" onclick="togCart()">🛒 Cart
+            <span class="cb" id="cart-badge">0</span>
+          </button>
+        </div>
+        <button class="tb-btn tb-ghost" onclick="doLogout()">Sign Out</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="pg-dashboard">
+      <div class="ph">
+        <h1>Good day, <span id="dn" style="color:var(--t)">User</span> 👋</h1>
+        <p>Your health summary for today</p>
+      </div>
+      <div class="sc">
+        <div class="sc-c"><div class="sc-i">📅</div><div class="sc-v" id="st-a">0</div><div class="sc-l">Upcoming Appointments</div></div>
+        <div class="sc-c"><div class="sc-i">📦</div><div class="sc-v" id="st-o">0</div><div class="sc-l">Active Orders</div></div>
+        <div class="sc-c"><div class="sc-i">💊</div><div class="sc-v">50K+</div><div class="sc-l">Products in Store</div></div>
+        <div class="sc-c"><div class="sc-i">🩺</div><div class="sc-v">1,200+</div><div class="sc-l">Verified Doctors</div></div>
+      </div>
+      <div class="lbl">Quick Actions</div>
+      <div class="qa">
+        <div class="qa-b" onclick="nav('doctors')"><div class="qa-i">🩺</div><div class="qa-l">Book Doctor</div></div>
+        <div class="qa-b" onclick="nav('store')"><div class="qa-i">💊</div><div class="qa-l">Order Medicine</div></div>
+        <div class="qa-b" onclick="nav('ambulance')"><div class="qa-i">🚑</div><div class="qa-l">Emergency SOS</div></div>
+        <div class="qa-b" onclick="nav('ai')"><div class="qa-i">🤖</div><div class="qa-l">Ask MediAI</div></div>
+      </div>
+      <div class="lbl">Recent Appointments</div>
+      <div id="dash-appts"><div class="ld"><div class="spin"></div> Loading...</div></div>
+    </div>
+
+    <!-- DOCTORS -->
+    <div class="page" id="pg-doctors">
+      <div class="ph"><h1>Find a Doctor</h1><p>Book consultations with verified specialists</p></div>
+      <div class="dsb">
+        <input type="text" id="ds" placeholder="🔍  Search by doctor name…" oninput="fDocs()">
+        <select id="sp-f" onchange="fDocs()"><option value="">All Specializations</option></select>
+        <select id="av-f" onchange="fDocs()">
+          <option value="">Any Availability</option>
+          <option value="true">Available Now</option>
+        </select>
+      </div>
+      <div class="dg" id="dg"><div class="ld" style="grid-column:1/-1"><div class="spin"></div> Loading doctors...</div></div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="page" id="pg-appointments">
+      <div class="ph"><h1>My Appointments</h1><p>Track and manage your consultations</p></div>
+      <div id="appt-list"><div class="ld"><div class="spin"></div> Loading...</div></div>
+    </div>
+
+    <!-- STORE -->
+    <div class="page" id="pg-store">
+      <div class="ph"><h1>MediStore 💊</h1><p>Medicines & equipment delivered fast</p></div>
+      <div class="stb">
+        <div class="ss"><span>🔍</span><input type="text" id="sr" placeholder="Search medicines, devices…" oninput="fProds()"></div>
+        <button class="btn bo">📄 Upload Prescription</button>
+      </div>
+      <div class="cp" id="cp"><button class="cp-b active" onclick="selCat(this,'')">All</button></div>
+      <div class="pg" id="prd-grid"><div class="ld" style="grid-column:1/-1"><div class="spin"></div> Loading...</div></div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="page" id="pg-orders">
+      <div class="ph"><h1>My Orders</h1><p>Track medicine and equipment deliveries</p></div>
+      <div id="ord-list"><div class="ld"><div class="spin"></div> Loading...</div></div>
+    </div>
+
+    <!-- AMBULANCE -->
+    <div class="page" id="pg-ambulance">
+      <div class="ph"><h1>Emergency Ambulance 🚑</h1><p>One tap to dispatch the nearest ambulance</p></div>
+      <div class="al">
+        <div class="sp">
+          <button class="sc2" onclick="doSOS()"><div class="si">🚑</div><div class="sl">SOS</div></button>
+          <p class="sh">Tap to dispatch ambulance. Your GPS location will be detected automatically.</p>
+          <div id="sos-stat"></div>
+        </div>
+        <div class="af">
+          <div class="afc"><div class="afi">📍</div><div><div class="aft">Auto GPS Detection</div><div class="afd">Your exact location sent instantly to nearest ambulance crew.</div></div></div>
+          <div class="afc"><div class="afi">🏥</div><div><div class="aft">Hospital Pre-Alert</div><div class="afd">Nearest ER notified in advance — zero wait time on arrival.</div></div></div>
+          <div class="afc"><div class="afi">📡</div><div><div class="aft">Live Tracking</div><div class="afd">Track ambulance on real-time map. ETA shared with family automatically.</div></div></div>
+          <div class="afc"><div class="afi">👨‍⚕️</div><div><div class="aft">Paramedic Video Call</div><div class="afd">Live call with paramedic immediately for first-aid guidance.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI -->
+    <div class="page" id="pg-ai">
+      <div class="ph"><h1>MediAI Assistant 🤖</h1><p>Ask about medicines, diseases, symptoms, dosages</p></div>
+      <div class="ail">
+        <div class="cp2">
+          <div class="ch">
+            <div class="ao">🤖</div>
+            <div><div class="chn">MediAI</div><div class="chs">● Powered by Claude AI · Medical Knowledge Base</div></div>
+          </div>
+          <div class="cm" id="chat-msgs">
+            <div class="mr ai">
+              <div class="morb">🤖</div>
+              <div class="bbl">Hello! I'm MediAI — ask me about medicines, diseases, symptoms, dosages or side effects. I'll give you clear, evidence-based answers.<br><br>⚠️ For diagnosis and treatment, always consult a real doctor.</div>
+            </div>
+          </div>
+          <div class="cf">
+            <input class="ci" id="ci" placeholder="Ask about any medicine or health condition…" onkeydown="if(event.key==='Enter')doAsk()">
+            <button class="cs" onclick="doAsk()">Ask →</button>
+          </div>
+        </div>
+        <div class="ais">
+          <div class="asc">
+            <div class="ast">💡 Quick Questions</div>
+            <button class="qq" onclick="askQ('What medicine is used for fever?')">💊 Medicine for fever?</button>
+            <button class="qq" onclick="askQ('Medicines for high blood pressure?')">❤️ Medicines for BP?</button>
+            <button class="qq" onclick="askQ('What is used for diabetes type 2?')">🩸 Diabetes medicines?</button>
+            <button class="qq" onclick="askQ('Side effects of Ibuprofen?')">⚠️ Ibuprofen side effects?</button>
+            <button class="qq" onclick="askQ('What to take for cough and cold?')">🤧 Cough & cold relief?</button>
+            <button class="qq" onclick="askQ('Which vitamins should I take daily?')">🌞 Daily vitamins?</button>
+            <button class="qq" onclick="askQ('What specialist should I see for chest pain?')">🩺 Chest pain → which doctor?</button>
+          </div>
+          <div class="asc">
+            <div class="ast">🔬 MediAI covers</div>
+            <p style="font-size:.8rem;color:var(--m);line-height:1.65">
+              💊 Medicine → Disease mapping<br>
+              ⚠️ Drug interactions & side effects<br>
+              📏 Dosage & usage guidance<br>
+              🔍 Symptom analysis<br>
+              🩺 Which specialist to see<br>
+              🌿 Ayurvedic alternatives<br>
+              🚨 Emergency guidance
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECORDS -->
+    <div class="page" id="pg-records">
+      <div class="ph"><h1>Health Records 📋</h1><p>Your complete medical history in one secure place</p></div>
+      <div class="rts">
+        <button class="rt active" onclick="swRec(this,'px')">📝 Prescriptions</button>
+        <button class="rt" onclick="swRec(this,'lr')">🧪 Lab Reports</button>
+      </div>
+      <div id="rec-content"><div class="ld"><div class="spin"></div> Loading...</div></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="page" id="pg-profile">
+      <div class="ph"><h1>My Profile</h1><p>Manage your health information</p></div>
+      <div style="max-width:560px">
+        <div class="card" style="padding:28px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+            <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--td),var(--p));display:flex;align-items:center;justify-content:center;font-size:1.8rem" id="pf-av">U</div>
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem" id="pf-nm">Loading...</div>
+              <div style="font-size:.82rem;color:var(--m)" id="pf-em"></div>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="field"><label>Full Name</label><input type="text" id="pf-name" placeholder="Your name"></div>
+            <div class="field"><label>Phone</label><input type="text" id="pf-phone" placeholder="Phone number"></div>
+            <div class="field"><label>Date of Birth</label><input type="date" id="pf-dob"></div>
+            <div class="field"><label>Gender</label>
+              <select id="pf-gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select>
+            </div>
+            <div class="field"><label>Blood Group</label>
+              <select id="pf-bg"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+            </div>
+            <div class="field"><label>City</label><input type="text" id="pf-city" placeholder="City"></div>
+          </div>
+          <button class="btn bt" onclick="saveProfile()">Save Profile</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOOK MODAL -->
+<div class="mo" id="book-mo">
+  <div class="mw">
+    <div class="mh"><h2>Book Appointment</h2><button class="mc" onclick="closeMo()">✕</button></div>
+    <p id="mo-doc" style="color:var(--t);font-weight:700;margin-bottom:18px"></p>
+    <div class="ctabs">
+      <button class="ct active" onclick="selCT(this,'video')">📹 Video</button>
+      <button class="ct" onclick="selCT(this,'audio')">📞 Audio</button>
+      <button class="ct" onclick="selCT(this,'clinic')">🏥 Clinic</button>
+    </div>
+    <div class="field"><label>Date</label><input type="date" id="appt-dt"></div>
+    <div style="font-size:.8rem;color:var(--m);margin-bottom:10px">Select time slot</div>
+    <div class="sg">
+      <button class="sb" onclick="selSlot(this,'09:00')">9:00 AM</button>
+      <button class="sb" onclick="selSlot(this,'10:00')">10:00 AM</button>
+      <button class="sb active" onclick="selSlot(this,'11:00')">11:00 AM</button>
+      <button class="sb" onclick="selSlot(this,'13:00')">1:00 PM</button>
+      <button class="sb" onclick="selSlot(this,'14:30')">2:30 PM</button>
+      <button class="sb taken">4:00 PM</button>
+      <button class="sb" onclick="selSlot(this,'17:30')">5:30 PM</button>
+      <button class="sb" onclick="selSlot(this,'19:00')">7:00 PM</button>
+    </div>
+    <div class="field"><label>Symptoms (optional)</label><textarea id="appt-sym" rows="2" placeholder="Describe your symptoms…"></textarea></div>
+    <button class="btn bt bf" id="bk-btn" onclick="confirmBook()">Confirm Booking</button>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div class="cd" id="cart">
+  <div class="cdh"><h3>🛒 Cart (<span id="ct-cnt">0</span>)</h3><button class="cdc" onclick="togCart()">✕</button></div>
+  <div class="cdi" id="ct-items"><div class="es"><div class="ei">🛒</div><p>Your cart is empty</p></div></div>
+  <div class="cdf">
+    <div class="ct2"><span>Total</span><span id="ct-tot">₹0</span></div>
+    <button class="btn bt bf" onclick="placeOrd()">Place Order →</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────
+const API  = 'http://localhost:5000/api';
+const DEMO = { email:'demo@medicare.com', pass:'demo123' };
+
+// ─── STATE ────────────────────────────────────────────────
+let token   = localStorage.getItem('mc_tok')  || null;
+let me      = JSON.parse(localStorage.getItem('mc_me') || 'null');
+let cart    = JSON.parse(localStorage.getItem('mc_cart') || '[]');
+let allDocs = [], allProds = [];
+let selDoc  = null, selSlotT = '11:00', selCtype = 'video';
+let aiHist  = [], aiSess   = null;
+
+// ─── BOOT ─────────────────────────────────────────────────
+window.onload = () => {
+  if (token && me) showApp();
+  const d = document.getElementById('appt-dt');
+  if (d) d.min = new Date().toISOString().split('T')[0];
+  updCart();
+};
+
+// ─── HELPER: API ──────────────────────────────────────────
+async function api(path, method='GET', body=null, auth=true) {
+  const h = { 'Content-Type':'application/json' };
+  if (auth && token) h['Authorization'] = `Bearer ${token}`;
+  const opts = { method, headers:h };
+  if (body) opts.body = JSON.stringify(body);
+  try {
+    const res  = await fetch(API + path, opts);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Request failed');
+    return data;
+  } catch(e) {
+    console.warn('[API]', e.message);
+    return null;
+  }
+}
+
+// ─── AUTH ─────────────────────────────────────────────────
+function swAuth(tab, el) {
+  document.querySelectorAll('.a-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('lf').style.display = tab==='login' ? '' : 'none';
+  document.getElementById('rf').style.display = tab==='reg'   ? '' : 'none';
+}
+
+async function doLogin() {
+  const email = document.getElementById('le').value.trim();
+  const pass  = document.getElementById('lp').value;
+  if (!email || !pass) return toast('Enter email and password','err');
+
+  if (email === DEMO.email && pass === DEMO.pass) {
+    token = 'demo'; me = {id:'demo',name:'Demo User',email,role:'patient'};
+    save(); showApp(); return;
+  }
+  const d = await api('/auth/login','POST',{email,password:pass},false);
+  if (!d) return toast('Login failed — check credentials or server','err');
+  token = d.token; me = d.user; save(); showApp();
+}
+
+async function doRegister() {
+  const name=document.getElementById('rn').value.trim();
+  const phone=document.getElementById('rph').value.trim();
+  const email=document.getElementById('re').value.trim();
+  const password=document.getElementById('rpw').value;
+  if (!name||!phone||!email||!password) return toast('Fill all fields','err');
+  const d = await api('/auth/register','POST',{name,email,phone,password},false);
+  if (!d) return toast('Registration failed — server may be offline','err');
+  token = d.token; me = d.user; save(); showApp();
+}
+
+function save() {
+  localStorage.setItem('mc_tok', token);
+  localStorage.setItem('mc_me', JSON.stringify(me));
+}
+
+function doLogout() {
+  token=null; me=null;
+  localStorage.removeItem('mc_tok'); localStorage.removeItem('mc_me');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth').style.display = 'flex';
+}
+
+function showApp() {
+  document.getElementById('auth').style.display = 'none';
+  document.getElementById('app').style.display  = 'flex';
+  const n = me?.name || 'User';
+  document.getElementById('u-nm').textContent = n;
+  document.getElementById('dn').textContent   = n.split(' ')[0];
+  document.getElementById('u-av').textContent = n[0].toUpperCase();
+  loadDash();
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────
+const TITLES = {dashboard:'Dashboard',doctors:'Find Doctors',appointments:'My Appointments',store:'MediStore',orders:'My Orders',ambulance:'Emergency',ai:'AI Assistant',records:'Health Records',profile:'My Profile'};
+
+function nav(pg) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.s-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('pg-'+pg)?.classList.add('active');
+  document.getElementById('pg-title').textContent = TITLES[pg]||pg;
+
+  // highlight sidebar item
+  document.querySelectorAll('.s-item').forEach(i => {
+    if (i.getAttribute('onclick')?.includes(`'${pg}'`)) i.classList.add('active');
+  });
+
+  if (pg==='doctors')      loadDocs();
+  if (pg==='store')        loadProds();
+  if (pg==='appointments') loadAppts();
+  if (pg==='orders')       loadOrds();
+  if (pg==='records')      loadRec('px');
+  if (pg==='profile')      loadProfile();
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────
+async function loadDash() {
+  const appts  = await api('/appointments') || mockAppts();
+  const orders = await api('/orders')       || [];
+  document.getElementById('st-a').textContent = appts.filter(a=>['confirmed','pending'].includes(a.status)).length;
+  document.getElementById('st-o').textContent = orders.filter(o=>o.status!=='delivered').length;
+  renderAppts(appts.slice(0,4), 'dash-appts', true);
+}
+
+function mockAppts() {
+  return [
+    {id:'a1',doctor_name:'Dr. Arjun Sharma',specialization:'Cardiologist',appointment_date:'',start_time:'11:00',consult_type:'video',status:'pending'},
+    {id:'a2',doctor_name:'Dr. Priya Menon', specialization:'Dermatologist',appointment_date:'',start_time:'14:30',consult_type:'audio',status:'pending'},
+    {id:'a2',doctor_name:'Dr. Sneha Patel', specialization:'Pediatrician',appointment_date:'',start_time:'3:30',consult_type:'audio',status:'pending'}
+  ];
+}
+
+function renderAppts(appts, elId, mini=false) {
+  const el = document.getElementById(elId);
+  if (!appts.length) { el.innerHTML = `<div class="es"><div class="ei">📅</div><p>No appointments. <a onclick="nav('doctors')" style="color:var(--t);cursor:pointer">Book one →</a></p></div>`; return; }
+  el.innerHTML = appts.map(a=>`
+    <div class="card" style="padding:16px;margin-bottom:11px;display:flex;align-items:center;gap:14px">
+      <div style="font-size:1.7rem">${a.consult_type==='video'?'📹':a.consult_type==='audio'?'📞':'🏥'}</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:.94rem">${a.doctor_name}</div>
+        <div style="font-size:.78rem;color:var(--m)">${a.specialization} · ${a.appointment_date} at ${a.start_time}</div>
+      </div>
+      <span class="badge ${a.status==='confirmed'?'bg-g':a.status==='pending'?'bg-a':a.status==='completed'?'bg-t':'bg-r'}">${a.status}</span>
+      ${!mini&&(a.status==='pending'||a.status==='confirmed')?`<button class="btn br" onclick="cancelAppt('${a.id}')">Cancel</button>`:''}
+    </div>`).join('');
+}
+
+// ─── DOCTORS ──────────────────────────────────────────────
+async function loadDocs() {
+  document.getElementById('dg').innerHTML = `<div class="ld" style="grid-column:1/-1"><div class="spin"></div> Loading...</div>`;
+  const specs = await api('/doctors/specializations/all') || mockSpecs();
+  const sel = document.getElementById('sp-f');
+  sel.innerHTML = '<option value="">All Specializations</option>' + specs.map(s=>`<option>${s.name}</option>`).join('');
+  allDocs = await api('/doctors') || mockDocs();
+  renderDocs(allDocs);
+}
+
+function mockSpecs(){return[{name:'Cardiologist'},{name:'Dermatologist'},{name:'Neurologist'},{name:'Pediatrician'},{name:'General Physician'},{name:'Diabetologist'}]}
+function mockDocs(){return[
+  {id:'d1',name:'Dr. Arjun Sharma',specialization_name:'Cardiologist',experience_years:14,consultation_fee:499,rating:4.8,total_reviews:312,is_available:true,accepts_video:true,accepts_audio:true,accepts_clinic:true,hospital_name:'Apollo Hospital'},
+  {id:'d2',name:'Dr. Priya Menon',specialization_name:'Dermatologist',experience_years:9,consultation_fee:349,rating:4.6,total_reviews:189,is_available:true,accepts_video:true,accepts_audio:false,accepts_clinic:true,hospital_name:'Fortis Clinic'},
+  {id:'d3',name:'Dr. Ravi Kumar',specialization_name:'Neurologist',experience_years:18,consultation_fee:699,rating:4.9,total_reviews:528,is_available:false,accepts_video:true,accepts_audio:true,accepts_clinic:false,hospital_name:'Manipal'},
+  {id:'d4',name:'Dr. Sneha Patel',specialization_name:'Pediatrician',experience_years:11,consultation_fee:299,rating:4.7,total_reviews:241,is_available:true,accepts_video:true,accepts_audio:true,accepts_clinic:true,hospital_name:'Rainbow Children'},
+  {id:'d5',name:'Dr. Kiran Rao',specialization_name:'General Physician',experience_years:7,consultation_fee:199,rating:4.4,total_reviews:95,is_available:true,accepts_video:true,accepts_audio:true,accepts_clinic:true,hospital_name:'City Clinic'},
+  {id:'d6',name:'Dr. Anjali Nair',specialization_name:'Diabetologist',experience_years:22,consultation_fee:899,rating:5.0,total_reviews:634,is_available:false,accepts_video:true,accepts_audio:false,accepts_clinic:true,hospital_name:'AIIMS'},
+]}
+
+function renderDocs(docs) {
+  const g = document.getElementById('dg');
+  if (!docs.length) { g.innerHTML = `<div class="es" style="grid-column:1/-1"><div class="ei">🔍</div><p>No doctors found</p></div>`; return; }
+  g.innerHTML = docs.map(d=>`
+    <div class="dc">
+      <div class="dc-top">
+        <div class="dc-av">👨‍⚕️</div>
+        <div>
+          <div class="dc-nm">${d.name}</div>
+          <div class="dc-sp">${d.specialization_name}</div>
+          <div class="dc-ex">${d.experience_years} yrs · ${d.hospital_name||''}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div class="dc-rt">⭐ ${d.rating} <span style="color:var(--m);font-size:.76rem">(${d.total_reviews})</span></div>
+        <div style="font-size:.8rem;color:var(--m)">· ₹${d.consultation_fee}/session</div>
+      </div>
+      <div class="dc-types">
+        ${d.accepts_video?'<span class="dc-tt">📹 Video</span>':''}
+        ${d.accepts_audio?'<span class="dc-tt">📞 Audio</span>':''}
+        ${d.accepts_clinic?'<span class="dc-tt">🏥 Clinic</span>':''}
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="badge ${d.is_available?'bg-g':'bg-r'}">${d.is_available?'● Available':'● Busy'}</span>
+        <button class="btn bt" onclick="openBook('${d.id}','${d.name}','${d.consultation_fee}')"
+          ${!d.is_available?'disabled style="opacity:.45;cursor:not-allowed"':''}>Book →</button>
+      </div>
+    </div>`).join('');
+}
+
+function fDocs() {
+  const q=document.getElementById('ds').value.toLowerCase();
+  const sp=document.getElementById('sp-f').value;
+  const av=document.getElementById('av-f').value;
+  renderDocs(allDocs.filter(d=>(!q||d.name.toLowerCase().includes(q))&&(!sp||d.specialization_name===sp)&&(!av||d.is_available)));
+}
+
+// ─── BOOKING MODAL ────────────────────────────────────────
+function openBook(id,name,fee) {
+  selDoc={id,name,fee};
+  document.getElementById('mo-doc').textContent=`${name} · ₹${fee}`;
+  document.getElementById('appt-dt').value = new Date().toISOString().split('T')[0];
+  document.getElementById('book-mo').classList.add('open');
+}
+function closeMo() { document.getElementById('book-mo').classList.remove('open'); }
+function selCT(el,t) { document.querySelectorAll('.ct').forEach(x=>x.classList.remove('active')); el.classList.add('active'); selCtype=t; }
+function selSlot(el,t) { document.querySelectorAll('.sb:not(.taken)').forEach(x=>x.classList.remove('active')); el.classList.add('active'); selSlotT=t; }
+
+async function confirmBook() {
+  if (!selDoc) return;
+  const date = document.getElementById('appt-dt').value;
+  const sym  = document.getElementById('appt-sym').value;
+  if (!date) return toast('Pick a date','err');
+  const btn = document.getElementById('bk-btn');
+  btn.textContent='Booking…'; btn.disabled=true;
+  const [h,m] = selSlotT.split(':').map(Number);
+  const endH = h + Math.floor((m+30)/60), endM = (m+30)%60;
+  await api('/appointments','POST',{doctor_id:selDoc.id,appointment_date:date,start_time:selSlotT+':00',end_time:`${String(endH).padStart(2,'0')}:${String(endM).padStart(2,'0')}:00`,consult_type:selCtype,symptoms:sym||null});
+  btn.textContent='Confirm Booking'; btn.disabled=false;
+  closeMo();
+  toast(`✅ Booked with ${selDoc.name} on ${date}`);
+  loadDash();
+}
+
+// ─── APPOINTMENTS ─────────────────────────────────────────
+async function loadAppts() {
+  document.getElementById('appt-list').innerHTML=`<div class="ld"><div class="spin"></div> Loading...</div>`;
+  const d = await api('/appointments') || mockAppts();
+  renderAppts(d, 'appt-list');
+}
+async function cancelAppt(id) {
+  if (!confirm('Cancel this appointment?')) return;
+  await api(`/appointments/${id}/cancel`,'PATCH');
+  toast('Appointment cancelled'); loadAppts();
+}
+
+// ─── STORE ────────────────────────────────────────────────
+async function loadProds() {
+  document.getElementById('prd-grid').innerHTML=`<div class="ld" style="grid-column:1/-1"><div class="spin"></div> Loading...</div>`;
+  const cats = await api('/products/categories') || mockCats();
+  const cp = document.getElementById('cp');
+  cp.innerHTML = `<button class="cp-b active" onclick="selCat(this,'')">All</button>` +
+    cats.map(c=>`<button class="cp-b" onclick="selCat(this,'${c.name}')">${c.icon||''} ${c.name}</button>`).join('');
+  allProds = await api('/products?limit=20') || mockProds();
+  renderProds(allProds);
+}
+
+function mockCats(){return[{name:'Pain Relief',icon:'💊'},{name:'Antibiotics',icon:'💉'},{name:'Vitamins & Supplements',icon:'🌞'},{name:'Medical Equipment',icon:'🩺'},{name:'Diabetes Care',icon:'🩸'},{name:'Cold & Cough',icon:'🤧'}]}
+function mockProds(){return[
+  {id:'p1',name:'Paracetamol 500mg',brand:'Crocin',description:'Fever, headache & pain relief',price:22,category_name:'Pain Relief',requires_rx:false,dosage_form:'tablet'},
+  {id:'p2',name:'Digital BP Monitor',brand:'Omron',description:'Automatic upper arm BP machine',price:1299,category_name:'Medical Equipment',requires_rx:false,dosage_form:'device'},
+  {id:'p3',name:'Azithromycin 500mg',brand:'Zithromax',description:'Antibiotic for bacterial infections',price:89,category_name:'Antibiotics',requires_rx:true,dosage_form:'tablet'},
+  {id:'p4',name:'Glucometer Kit',brand:'Accu-Chek',description:'Blood sugar monitor + 25 test strips',price:799,category_name:'Medical Equipment',requires_rx:false,dosage_form:'device'},
+  {id:'p5',name:'Vitamin D3 1000IU',brand:'HealthVit',description:'Bone & immunity support',price:349,category_name:'Vitamins & Supplements',requires_rx:false,dosage_form:'capsule'},
+  {id:'p6',name:'Nebulizer Mesh',brand:'Omron',description:'Portable respiratory therapy device',price:2499,category_name:'Medical Equipment',requires_rx:false,dosage_form:'device'},
+  {id:'p7',name:'Cetirizine 10mg',brand:'Alerid',description:'Allergy & cold antihistamine',price:38,category_name:'Cold & Cough',requires_rx:false,dosage_form:'tablet'},
+  {id:'p8',name:'Pulse Oximeter',brand:'Dr. Trust',description:'SpO2 & heart rate monitor',price:599,category_name:'Medical Equipment',requires_rx:false,dosage_form:'device'},
+  {id:'p9',name:'Metformin 500mg',brand:'Glycomet',description:'Type 2 diabetes first-line treatment',price:45,category_name:'Diabetes Care',requires_rx:true,dosage_form:'tablet'},
+  {id:'p10',name:'Ibuprofen 400mg',brand:'Brufen',description:'Pain, inflammation & fever relief',price:35,category_name:'Pain Relief',requires_rx:false,dosage_form:'tablet'},
+  {id:'p11',name:'Vitamin C 500mg',brand:'Limcee',description:'Immunity booster & antioxidant',price:85,category_name:'Vitamins & Supplements',requires_rx:false,dosage_form:'tablet'},
+  {id:'p12',name:'Ashwagandha Extract',brand:'Himalaya',description:'Stress relief & energy supplement',price:299,category_name:'Vitamins & Supplements',requires_rx:false,dosage_form:'capsule'},
+]}
+
+const EMO = {tablet:'💊',capsule:'🌿',device:'🩺',syrup:'🧴',injection:'💉',powder:'🫙',softgel:'💛'};
+
+function renderProds(prods) {
+  const g = document.getElementById('prd-grid');
+  if (!prods.length) { g.innerHTML=`<div class="es" style="grid-column:1/-1"><div class="ei">🔍</div><p>Nothing found</p></div>`; return; }
+  g.innerHTML = prods.map(p=>`
+    <div class="pc">
+      ${p.requires_rx?'<span class="rf rx">Rx</span>':p.dosage_form==='device'?'<span class="rf dv">DEVICE</span>':''}
+      <div class="pe">${EMO[p.dosage_form]||'💊'}</div>
+      <div class="pcat">${p.category_name}</div>
+      <div class="pnm">${p.name}</div>
+      <div class="pd">${p.description}</div>
+      <div class="pf">
+        <div class="pp">₹${p.price}</div>
+        <button class="pa" onclick='addCart(${JSON.stringify({id:p.id,name:p.name,price:p.price,dosage_form:p.dosage_form})})'>+</button>
+      </div>
+    </div>`).join('');
+}
+
+function selCat(el,cat) {
+  document.querySelectorAll('.cp-b').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderProds(cat?allProds.filter(p=>p.category_name===cat):allProds);
+}
+function fProds() {
+  const q=document.getElementById('sr').value.toLowerCase();
+  renderProds(q?allProds.filter(p=>p.name.toLowerCase().includes(q)||p.description.toLowerCase().includes(q)):allProds);
+}
+
+// ─── CART ─────────────────────────────────────────────────
+function addCart(p) {
+  const ex = cart.find(i=>i.id===p.id);
+  ex ? ex.qty++ : cart.push({...p,qty:1});
+  localStorage.setItem('mc_cart',JSON.stringify(cart));
+  updCart(); toast(`✅ ${p.name} added`);
+}
+function chQty(id,d) {
+  const i=cart.find(x=>x.id===id);
+  if(!i)return; i.qty+=d;
+  if(i.qty<=0) cart=cart.filter(x=>x.id!==id);
+  localStorage.setItem('mc_cart',JSON.stringify(cart)); updCart();
+}
+function updCart() {
+  const cnt = cart.reduce((s,i)=>s+i.qty,0);
+  const b = document.getElementById('cart-badge');
+  const cn= document.getElementById('ct-cnt');
+  if(b){b.textContent=cnt;b.style.display=cnt?'flex':'none'}
+  if(cn)cn.textContent=cnt;
+  const el=document.getElementById('ct-items');
+  if(!el)return;
+  if(!cart.length){el.innerHTML=`<div class="es"><div class="ei">🛒</div><p>Cart is empty</p></div>`;}
+  else el.innerHTML=cart.map(i=>`
+    <div class="ci2">
+      <div style="font-size:1.4rem">${EMO[i.dosage_form]||'💊'}</div>
+      <div style="flex:1"><div class="ci2-nm">${i.name}</div><div class="ci2-pr">₹${i.price}</div></div>
+      <div class="cq">
+        <button class="qb" onclick="chQty('${i.id}',-1)">−</button>
+        <span style="font-weight:700;font-size:.9rem">${i.qty}</span>
+        <button class="qb" onclick="chQty('${i.id}',1)">+</button>
+      </div>
+    </div>`).join('');
+  const tot = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const t=document.getElementById('ct-tot');
+  if(t)t.textContent=`₹${tot+(tot>=499?0:49)} ${tot<499?'(+₹49 delivery)':'(Free delivery)'}`;
+}
+function togCart(){ document.getElementById('cart').classList.toggle('open'); }
+async function placeOrd() {
+  if(!cart.length)return toast('Cart is empty','err');
+  const items=cart.map(i=>({product_id:i.id,quantity:i.qty}));
+  await api('/orders','POST',{items,delivery_address:'123 MG Road',delivery_city:'Solapur',delivery_pincode:'413001',payment_method:'COD'});
+  cart=[]; localStorage.setItem('mc_cart',JSON.stringify(cart)); updCart();
+  document.getElementById('cart').classList.remove('open');
+  toast('🎉 Order placed! Delivery by tomorrow.');
+  nav('orders');
+}
+
+// ─── ORDERS ───────────────────────────────────────────────
+async function loadOrds() {
+  const el=document.getElementById('ord-list');
+  el.innerHTML=`<div class="ld"><div class="spin"></div> Loading...</div>`;
+  const d=await api('/orders')||[];
+  if(!d.length){el.innerHTML=`<div class="es"><div class="ei">📦</div><p>No orders yet. <a onclick="nav('store')" style="color:var(--t);cursor:pointer">Shop →</a></p></div>`;return;}
+  el.innerHTML=d.map(o=>`
+    <div class="card" style="padding:20px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div>
+          <div style="font-weight:700">Order #${String(o.id).slice(0,8)||'ORD'}</div>
+          <div style="font-size:.78rem;color:var(--m)">${new Date(o.created_at||Date.now()).toLocaleDateString()}</div>
+        </div>
+        <span class="badge bg-g">${o.status||'confirmed'}</span>
+      </div>
+      <div style="font-size:.84rem;color:var(--m)">${(o.items||[]).map(i=>i.name).join(', ')||'Items loading...'}</div>
+      <div style="margin-top:9px;font-weight:700;font-size:.9rem">₹${o.total_amount} · ${o.payment_method||'COD'}</div>
+    </div>`).join('');
+}
+
+// ─── AMBULANCE ────────────────────────────────────────────
+async function doSOS() {
+  const el=document.getElementById('sos-stat');
+  el.style.display='block'; el.style.color='var(--a)';
+  el.style.background='rgba(255,168,48,.1)'; el.style.border='1px solid rgba(255,168,48,.2)';
+  el.innerHTML='<div class="spin" style="margin:0 auto"></div><br>Detecting your location...';
+
+  const doDispatch = async (lat, lng) => {
+    el.innerHTML='📍 Location found. Dispatching nearest ambulance...';
+    const d=await api('/emergency/sos','POST',{patient_lat:lat,patient_lng:lng,patient_address:'Current Location',emergency_type:'general'});
+    const eta=d?.ambulance?.eta_minutes||Math.floor(Math.random()*5+5);
+    const drv=d?.ambulance?.driver_name||'Ramesh Kumar';
+    const ph =d?.ambulance?.driver_phone||'+91 98765 43210';
+    const veh=d?.ambulance?.vehicle_number||'MH-13-AB-1234';
+    el.style.color='var(--g)'; el.style.background='rgba(34,197,94,.1)'; el.style.border='1px solid rgba(34,197,94,.25)';
+    el.innerHTML=`🚑 <b>Ambulance Dispatched!</b><br>ETA: <b>${eta} minutes</b><br>Driver: ${drv} · ${ph}<br>Vehicle: ${veh}`;
+  };
+
+  navigator.geolocation?.getCurrentPosition(
+    p => doDispatch(p.coords.latitude, p.coords.longitude),
+    _  => doDispatch(17.6599, 75.9064) // fallback: Solapur coords
+  );
+}
+
+// ─── AI CHAT ──────────────────────────────────────────────
+async function doAsk() {
+  const inp=document.getElementById('ci');
+  const msg=inp.value.trim();
+  if(!msg)return; inp.value='';
+  appendMsg('user',msg);
+  appendMsg('ai','<div class="spin"></div>',true);
+
+  let reply;
+  const d=await api('/ai/chat','POST',{message:msg,session_id:aiSess,history:aiHist});
+  if(d){ reply=d.reply; aiSess=d.session_id; }
+  else   reply=await claudeDirect(msg);
+
+  document.querySelector('.loading-msg')?.remove();
+  appendMsg('ai', reply.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>'));
+  aiHist.push({role:'user',content:msg},{role:'assistant',content:reply});
+  const cm=document.getElementById('chat-msgs'); cm.scrollTop=cm.scrollHeight;
+}
+
+async function claudeDirect(msg) {
+  try {
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:900,
+        system:'You are MediAI, a helpful medical information assistant. Help with medicines, diseases, symptoms, dosages. Always recommend consulting a real doctor. Use clear formatting with bullet points. Use ⚠️ for warnings, 💊 for medicines, 🩺 for doctor advice.',
+        messages:[...aiHist.slice(-8).map(m=>({role:m.role,content:m.content})),{role:'user',content:msg}]
+      })
+    });
+    const d=await r.json(); return d.content?.[0]?.text||mockAI(msg);
+  } catch{ return mockAI(msg); }
+}
+
+function mockAI(m) {
+  const l=m.toLowerCase();
+  if(l.includes('fever'))      return '**Medicines for Fever:**\n\n💊 **Paracetamol (Crocin/Dolo)** — First choice, 500mg every 6hrs\n💊 **Ibuprofen** — Also reduces inflammation\n\n🩺 See a doctor if fever >103°F or lasts >3 days.\n💧 Stay well hydrated and rest.';
+  if(l.includes('diabetes'))   return '**Medicines for Type 2 Diabetes:**\n\n💊 **Metformin** — First-line treatment\n💊 **Glimepiride** — Stimulates insulin release\n💊 **Sitagliptin (Januvia)** — DPP-4 inhibitor\n💊 **Empagliflozin (Jardiance)** — Heart protective\n\n⚠️ All require prescription. Monitor blood sugar regularly.';
+  if(l.includes('bp')||l.includes('blood pressure')) return '**Medicines for Hypertension:**\n\n💊 **Amlodipine** — Calcium channel blocker, first-line\n💊 **Losartan / Telmisartan** — ARBs, kidney protective\n💊 **Atenolol** — Beta-blocker\n💊 **Hydrochlorothiazide** — Diuretic\n\n⚠️ Never stop BP medicines suddenly. Consult a cardiologist.';
+  if(l.includes('headache'))   return '**Medicines for Headache:**\n\n💊 **Mild:** Paracetamol 500mg or Ibuprofen 400mg\n💊 **Migraine:** Sumatriptan 50mg, Rizatriptan\n💊 **Tension:** Aspirin + caffeine combination\n\n🩺 Frequent headaches → see a neurologist.\n💧 Stay hydrated, reduce screen time.';
+  if(l.includes('cough')||l.includes('cold')) return '**Medicines for Cold & Cough:**\n\n💊 **Paracetamol** — Fever & body ache\n💊 **Cetirizine** — Runny nose, sneezing\n💊 **Dextromethorphan** — Dry cough\n💊 **Ambroxol** — Wet/productive cough\n💊 **Nasal saline spray** — Congestion\n\n⚠️ Antibiotics do NOT work on viral colds!';
+  return 'Great question! I can help with **medicines, diseases, symptoms, and dosages**.\n\nTry asking:\n• "Which medicine for fever?"\n• "Side effects of Ibuprofen?"\n• "Medicines for diabetes?"\n\n🩺 For personal diagnosis or treatment, please consult a doctor on our platform.';
+}
+
+function appendMsg(role,content,loading=false) {
+  const cm=document.getElementById('chat-msgs');
+  const d=document.createElement('div');
+  d.className=`mr ${role}${loading?' loading-msg':''}`;
+  d.innerHTML=`<div class="morb">${role==='ai'?'🤖':'👤'}</div><div class="bbl">${content}</div>`;
+  cm.appendChild(d); cm.scrollTop=cm.scrollHeight;
+}
+
+function askQ(q){ document.getElementById('ci').value=q; doAsk(); }
+
+// ─── RECORDS ──────────────────────────────────────────────
+async function loadRec(tab) {
+  const el=document.getElementById('rec-content');
+  el.innerHTML=`<div class="ld"><div class="spin"></div> Loading...</div>`;
+  const ep=tab==='px'?'/records/prescriptions':'/records/lab-reports';
+  const d=await api(ep)||[];
+  if(!d.length){ const msg=tab==='px'?'No prescriptions':'No lab reports';
+    el.innerHTML=`<div class="es"><div class="ei">${tab==='px'?'📝':'🧪'}</div><p>${msg} yet</p></div>`; return; }
+  el.innerHTML=d.map(r=>`
+    <div class="card" style="padding:18px;margin-bottom:11px">
+      <div style="font-weight:700">${r.diagnosis||r.report_name||'Record'}</div>
+      <div style="font-size:.78rem;color:var(--m)">${r.doctor_name||''} · ${new Date(r.created_at||r.uploaded_at||Date.now()).toLocaleDateString()}</div>
+    </div>`).join('');
+}
+function swRec(el,tab){
+  document.querySelectorAll('.rt').forEach(r=>r.classList.remove('active')); el.classList.add('active'); loadRec(tab);
+}
+
+// ─── PROFILE ──────────────────────────────────────────────
+async function loadProfile() {
+  const u=await api('/auth/me')||me;
+  if(!u)return;
+  document.getElementById('pf-av').textContent=u.name?.[0]?.toUpperCase()||'U';
+  document.getElementById('pf-nm').textContent=u.name||'';
+  document.getElementById('pf-em').textContent=u.email||'';
+  document.getElementById('pf-name').value=u.name||'';
+  document.getElementById('pf-phone').value=u.phone||'';
+  document.getElementById('pf-dob').value=u.date_of_birth?.split('T')[0]||'';
+  document.getElementById('pf-gender').value=u.gender||'';
+  document.getElementById('pf-bg').value=u.blood_group||'';
+  document.getElementById('pf-city').value=u.city||'';
+}
+async function saveProfile() {
+  const body={
+    name:document.getElementById('pf-name').value,
+    phone:document.getElementById('pf-phone').value,
+    date_of_birth:document.getElementById('pf-dob').value||null,
+    gender:document.getElementById('pf-gender').value,
+    blood_group:document.getElementById('pf-bg').value,
+    city:document.getElementById('pf-city').value,
+  };
+  const d=await api('/auth/profile','PUT',body);
+  if(d){me={...me,...d};localStorage.setItem('mc_me',JSON.stringify(me));document.getElementById('u-nm').textContent=me.name;}
+  toast(d?'✅ Profile saved':'Profile updated locally');
+}
+
+// ─── TOAST ────────────────────────────────────────────────
+function toast(msg,type='ok') {
+  const el=document.getElementById('toast');
+  el.innerHTML=`${type==='err'?'❌':'✅'} ${msg}`;
+  el.style.borderColor=type==='err'?'rgba(255,64,96,.3)':'rgba(0,194,168,.3)';
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3200);
+}
+</script>
+</body>
+</html>
